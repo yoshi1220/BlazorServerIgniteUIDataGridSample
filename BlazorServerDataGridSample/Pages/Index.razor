@@ -1,0 +1,435 @@
+﻿@page "/"
+@using AutoMapper;
+
+@using Microsoft.EntityFrameworkCore;
+@inject ISalesDetailService SalesDetailService;
+@inject IIgniteUIBlazor IgniteUIBlazor
+@inject IJSRuntime JS
+
+<PageTitle>DataGrid</PageTitle>
+<h3>Ignite UI for Blazor New Data Grid Sample</h3>
+
+@if (_salesDetails != null)
+{
+    <div class="container vertical">
+        <div class="container vertical fill">
+
+
+            <br>
+            @if (message != "")
+            {
+                <div class="alert alert-primary" role="alert">
+                    @message
+                </div>
+                <br>
+            }
+
+            @if (errorMessage != "")
+            {
+                <div class="alert alert-danger" role="alert">
+                    @errorMessage
+                </div>
+                <br>
+            }
+
+            <div class="d-flex my-2">
+                <div class="d-flex flex-column me-2">
+                    <label for="SlipNumber" class="form-label">伝票番号</label>
+                    <input @bind-value="SlipNumber" class="form-control" type="number" />
+                </div>
+                <br>
+                <div class="d-flex flex-column  me-2">
+                    <label for="RowNumber" class="form-label">行番号</label>
+                    <input @bind-value="RowNumber" class="form-control" type="number" />
+                </div>
+            </div>
+            <div class="d-flex my-2">
+                <div class="d-flex flex-column me-2">
+                    <label for="ItemCode" class="form-label">商品コード</label>
+                    <input @bind-value="ItemCode" class="form-control" type="text" />
+                </div>
+                <br>
+                <div class="d-flex flex-column  me-2">
+                    <label for="ItemName" class="form-label">商品名</label>
+                    <input @bind-value="ItemName" class="form-control" type="text" />
+                </div>
+            </div>
+            <div class="d-flex my-2">
+                <div class="d-flex flex-column  me-2">
+                    <label for="Quantity" class="form-label">数量</label>
+                    <input @bind-value="Quantity" class="form-control" type="number" />
+                </div>
+                <div class="d-flex flex-column  me-2">
+                    <label for="UnitPrice" class="form-label">単価</label>
+                    <input @bind-value="UnitPrice" class="form-control" type="number" />
+                </div>
+                <div class="d-flex flex-column  me-2">
+                    <label for="Amount" class="form-label">金額</label>
+                    <input @bind-value="Amount" class="form-control" type="number" disabled />
+                </div>
+                <div class="d-flex flex-column  me-2">
+                    <label for="SalesTax" class="form-label">消費税</label>
+                    <input @bind-value="SalesTax" class="form-control" type="number" disabled />
+                </div>
+            </div>
+
+            <br>
+
+            <div class="d-flex bd-highlight mb-3">
+                <button class="btn btn-primary" @onclick="AddNewDataButtonClick">Add Data</button>
+                <button class="btn btn-secondary ms-auto p-2 bd-highlight" @onclick="UpdateDetailsDataButtonClick">Update Details</button>
+            </div>
+
+            <br>
+
+            <IgbGrid Data="_salesDetails"
+                 Height="600px"
+                 ValidationStatusChange="OnValidationStatusChange"
+                 CellEdit="OnCellEdit"
+                 CellEditEnter="OnCellEditEnter"
+                 CellEditExit="OnCellEditExit"
+                 @ref="_grid"
+                 DisplayDensity="DisplayDensity.Compact">
+
+                <IgbColumnLayout Header="Header"
+                             Pinned="true">
+                    <IgbColumn Field="SlipNumber"
+                           Width="100px"
+                           RowStart="1"
+                           RowEnd="2"
+                           ColStart="1"
+                           Header="伝票番号"
+                           Editable="false">
+                    </IgbColumn>
+                    <IgbColumn Field="RowNumber"
+                           Width="100px"
+                           RowStart="1"
+                           RowEnd="2"
+                           ColStart="2"
+                           Header="行番号"
+                           Editable="false">
+                    </IgbColumn>
+                </IgbColumnLayout>
+
+                <IgbColumnLayout Header="Detail"
+                             Pinned="true">
+                    <IgbColumn Field="ItemCode"
+                           RowStart="1"
+                           ColStart="1"
+                           Header="商品コード"
+                           Editable="true">
+                    </IgbColumn>
+                    <IgbColumn RowStart="1"
+                           ColStart="2"
+                           Width="90px"
+                           Header="">
+                        <BodyTemplate>
+                            <button class="btn btn-primary">検索</button>
+                        </BodyTemplate>
+                    </IgbColumn>
+                    <IgbColumn Field="ItemName"
+                           RowStart="2"
+                           RowEnd="2"
+                           ColStart="1"
+                           ColEnd="2"
+                           Header="商品名"
+                           Editable="true">
+                    </IgbColumn>
+
+
+                    <IgbColumn Field="Quantity"
+                           DataType="GridColumnDataType.Number"
+                           RowStart="1"
+                           ColStart="3"
+                           Header="数量"
+                           Editable="true">
+                    </IgbColumn>
+
+                    <IgbColumn Field="UnitPrice"
+                           DataType="GridColumnDataType.Number"
+                           RowStart="2"
+                           ColStart="3"
+                           Header="単価"
+                           Editable="true">
+                    </IgbColumn>
+
+                    <IgbColumn Field="Amount"
+                           DataType="GridColumnDataType.Number"
+                           RowStart="1"
+                           ColStart="4"
+                           Header="金額"
+                           Editable="false">
+                    </IgbColumn>
+
+                    <IgbColumn Field="SalesTax"
+                           DataType="GridColumnDataType.Number"
+                           RowStart="2"
+                           ColStart="4"
+                           Header="消費税"
+                           Editable="false">
+                    </IgbColumn>
+                </IgbColumnLayout>
+
+                <IgbColumnLayout Header="DeleteButton"
+                             Pinned="true">
+                    <IgbColumn RowStart="1"
+                           ColStart="1"
+                           Width="90px"
+                           Header="削除">
+                        <BodyTemplate>
+                            <button class="btn btn-danger" @onclick="() => OnClickCell(context)">削除</button>
+                        </BodyTemplate>
+                    </IgbColumn>
+                </IgbColumnLayout>
+            </IgbGrid>
+
+        </div>
+    </div>
+
+}
+
+@code {
+    private IgbGrid? _grid;
+
+    public int SlipNumber { get; set; }
+
+    public int RowNumber { get; set; } = 1;
+
+    public string ItemCode { get; set; } = "S003";
+
+    public string ItemName { get; set; } = "商品3";
+
+    private decimal _quantity;
+    public decimal Quantity
+    {
+        set
+        {
+            _quantity = value;
+            Amount = Math.Ceiling(Quantity * _unitPrice);
+            SalesTax = Math.Ceiling(Amount * 0.1M);
+        }
+        get
+        {
+            return _quantity;
+        }
+    }
+    public decimal _unitPrice = 0;
+    public decimal UnitPrice
+    {
+        set
+        {
+            _unitPrice = value;
+            Amount = Math.Ceiling(Quantity * _unitPrice);
+            SalesTax = Math.Ceiling(Amount * 0.1M);
+        }
+        get
+        {
+            return _unitPrice;
+        }
+    }
+
+    public decimal Amount { get; set; } = 0;
+
+    public decimal SalesTax { get; set; } = 0;
+
+
+    private string message = "";
+    private string errorMessage = "";
+
+
+    private List<SalesDetailViewModel> _salesDetails = new();
+
+
+    //明細行の追加処理
+    private void AddRowButtonClick()
+    {
+        message = "";
+        errorMessage = "";
+
+        var tempDetails = new List<SalesDetailViewModel>(_salesDetails);
+
+        var newRow = new SalesDetailViewModel();
+        tempDetails.Add(newRow);
+
+        _salesDetails = tempDetails;
+
+        RowNumber++;
+
+        this.StateHasChanged();
+    }
+
+    //新規データ追加
+    private void AddNewDataButtonClick()
+    {
+        message = "";
+        errorMessage = "";
+
+        var tempDetails = new List<SalesDetailViewModel>(_salesDetails);
+
+        var newRow = new SalesDetailViewModel();
+        newRow.SlipNumber = SlipNumber;
+        newRow.RowNumber = RowNumber;
+        newRow.ItemCode = ItemCode;
+        newRow.ItemName = ItemName;
+        newRow.Quantity = Quantity;
+        newRow.UnitPrice = UnitPrice;
+        newRow.Amount = Amount;
+        newRow.SalesTax = SalesTax;
+
+        tempDetails.Add(newRow);
+
+        _salesDetails = tempDetails;
+
+        RowNumber++;
+
+        this.StateHasChanged();
+    }
+
+    //明細データの更新処理
+    private void UpdateDetailsDataButtonClick()
+    {
+        //処理判定フラグ等の初期化
+        message = "";
+        errorMessage = "";
+
+        // Mapするモデルの設定
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<SalesDetailViewModel, SalesDetail>();
+        });
+
+        // Mapperを作成
+        var mapper = config.CreateMapper();
+        // UserViewModelのデータがUserの型でマッピングされる
+        List<SalesDetail> salesData = new();
+
+        foreach (var item in _salesDetails)
+        {
+            var sale = mapper.Map<SalesDetail>(item);
+            salesData.Add(sale);
+        }
+
+
+        try
+        {
+            SalesDetailService.UpdateAll(salesData);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            errorMessage = ex.ToString();
+            return;
+        }
+
+        //画面に更新成功の表示
+        message = "更新に成功しました";
+        this.StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        //売上明細一覧データの取得
+        _salesDetails = SalesDetailService.GetDispAll().ToList();
+
+        //伝票番号の最大値
+        SlipNumber = _salesDetails.Max(n => n.SlipNumber) + 1;
+
+        //数量、単価初期値
+        this.Quantity = 12;
+        this.UnitPrice = 535;
+
+        message = "";
+        errorMessage = "";
+
+    }
+
+    private void OnClickCell(IgbCellTemplateContext context)
+    {
+        var grid = context.Parent as IgbGrid;
+        if (grid == null) return;
+
+        var rowIndex = context.Cell.Id.RowIndex;
+
+        if (rowIndex == -1) return;
+        var removeData = _salesDetails[rowIndex];
+
+        _salesDetails.Remove(removeData);
+        grid.NotifyRemoveItem(_salesDetails, rowIndex, removeData);
+    }
+
+    private async Task OnValidationStatusChange(IgbGridValidationStatusEventArgs args)
+    {
+        Console.WriteLine(args);
+        await Task.CompletedTask;
+    }
+
+    private async Task OnCellEdit(IgbGridEditEventArgs args)
+    {
+        Console.WriteLine(args);
+        await Task.CompletedTask;
+    }
+
+    private async Task OnCellEditEnter(IgbGridEditEventArgs args)
+    {
+        Console.WriteLine(args);
+        await Task.CompletedTask;
+    }
+
+    private async Task OnCellEditExit(IgbGridEditDoneEventArgs args)
+    {
+        try
+        {
+            errorMessage = "";
+
+            //対象のセルを特定
+            var columnIndex = args.Detail.CellID.ColumnID;
+            var rowIndex = args.Detail.CellID.RowIndex;
+
+            //変更された値を取得する
+            var parent = (IgbGridEditDoneEventArgsDetail)args.Detail.CellID.Parent;
+            var newValue = parent.NewValue;
+
+            //編集内容をViewModelに反映する
+            var updateData = _salesDetails[rowIndex];
+
+            if (columnIndex == 4) //商品コード
+            {
+                updateData.ItemCode = newValue.ToString()!;
+            }
+
+            if (columnIndex == 6) //商品名
+            {
+                updateData.ItemName = newValue.ToString()!;
+            }
+
+
+            if (columnIndex == 7) //数量
+            {
+                updateData.Quantity = decimal.Parse(newValue.ToString()!);
+                updateData.Amount = Math.Ceiling(updateData.Quantity * updateData.UnitPrice);
+                updateData.SalesTax = Math.Ceiling(updateData.Amount * 0.1M);
+            }
+
+            if (columnIndex == 8) //単価
+            {
+                updateData.UnitPrice = decimal.Parse(newValue.ToString()!);
+                updateData.Amount = Math.Ceiling(updateData.Quantity * updateData.UnitPrice);
+                updateData.SalesTax = Math.Ceiling(updateData.Amount * 0.1M);
+            }
+
+            //変更内容を反映
+            _grid!.NotifyUpdateItem(_salesDetails, rowIndex, updateData);
+
+            this.StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+            //検証のため、処理全体でエラー検知中
+            errorMessage = ex.ToString();
+        }
+
+        await Task.CompletedTask;
+    }
+
+
+}
