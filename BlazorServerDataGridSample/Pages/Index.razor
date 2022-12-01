@@ -1,8 +1,6 @@
 ﻿@page "/"
 
 @inject ISalesDetailService SalesDetailService;
-@inject IIgniteUIBlazor IgniteUIBlazor
-@inject IJSRuntime JS
 
 <PageTitle>DataGrid</PageTitle>
 <h3>Ignite UI for Blazor New Data Grid Sample</h3>
@@ -294,25 +292,6 @@
     //グリッドのViewModel
     private List<SalesDetailViewModel> _salesDetails = new();
 
-
-    //明細行の追加処理
-    private void AddRowButtonClick()
-    {
-        message = "";
-        errorMessage = "";
-
-        var tempDetails = new List<SalesDetailViewModel>(_salesDetails);
-
-        var newRow = new SalesDetailViewModel();
-        tempDetails.Add(newRow);
-
-        _salesDetails = tempDetails;
-
-        RowNumber++;
-
-        this.StateHasChanged();
-    }
-
     //新規データ追加
     private void AddNewDataButtonClick()
     {
@@ -394,10 +373,6 @@
         //数量、単価初期値
         this.Quantity = 12;
         this.UnitPrice = 535;
-
-        message = "";
-        errorMessage = "";
-
     }
 
     /// <summary>
