@@ -355,15 +355,11 @@
 
         // Mapperを作成
         var mapper = config.CreateMapper();
-        // UserViewModelのデータがUserの型でマッピングされる
-        List<SalesDetail> salesData = new();
 
-        foreach (var item in _salesDetails)
-        {
-            var sale = mapper.Map<SalesDetail>(item);
-            salesData.Add(sale);
-        }
-
+        // SalesDetailViewModelのデータがSalesDetailの型でマッピングされる
+        var salesData = _salesDetails
+            .Select(mapper.Map<SalesDetail>)
+            .ToList();
 
         try
         {
