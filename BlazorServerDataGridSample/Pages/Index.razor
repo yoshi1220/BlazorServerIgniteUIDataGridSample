@@ -1,7 +1,5 @@
 ﻿@page "/"
-@using AutoMapper;
 
-@using Microsoft.EntityFrameworkCore;
 @inject ISalesDetailService SalesDetailService;
 @inject IIgniteUIBlazor IgniteUIBlazor
 @inject IJSRuntime JS
@@ -124,14 +122,14 @@
                            Width="90px"
                            Header="">
                         <BodyTemplate>
-                            <button class="btn btn-primary">検索</button>
+                            <button class="btn btn-primary" @onclick="() => sampleDialog!.ShowDialog(context, _salesDetails)">検索</button>
                         </BodyTemplate>
                     </IgbColumn>
                     <IgbColumn Field="ItemName"
                            RowStart="2"
                            RowEnd="2"
                            ColStart="1"
-                           ColEnd="2"
+                           ColEnd="3"
                            Header="商品名"
                            Editable="true">
                     </IgbColumn>
@@ -170,6 +168,25 @@
                     </IgbColumn>
                 </IgbColumnLayout>
 
+                <IgbColumnLayout Header="CustomTemplate" Pinned="true">
+                    <IgbColumn RowStart="1"
+                           ColStart="1"
+                           Header="カスタム列">
+                        <BodyTemplate>
+                            <input class="form-control">
+                            <button class="btn btn-secondary">検索</button>
+                            <br>
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </BodyTemplate>
+                    </IgbColumn>
+                </IgbColumnLayout>
+
+                @*削除ボタン*@
                 <IgbColumnLayout Header="DeleteButton"
                              Pinned="true">
                     <IgbColumn RowStart="1"
@@ -177,7 +194,7 @@
                            Width="90px"
                            Header="削除">
                         <BodyTemplate>
-                            <button class="btn btn-danger" @onclick="() => OnClickCell(context)">削除</button>
+                            <button class="btn btn-danger" @onclick="() => OnClickCellRemove(context)">削除</button>
                         </BodyTemplate>
                     </IgbColumn>
                 </IgbColumnLayout>
@@ -188,9 +205,47 @@
 
 }
 
+<SampleDialog @ref="sampleDialog"
+              Title="検索画面サンプル"
+              Message="検索一覧が表示されます。"
+              OKButtonCaption="Yes"
+              CancelButtonCaption="No"
+              ActionSelected="ActionSelected">
+</SampleDialog>
+
 @code {
+
+    //検索ダイアログ関連
+    private SampleDialog? sampleDialog;
+
+    private void ActionSelected(ItemSearchResultViewModel dialogResult)
+    {
+        //編集内容をViewModelに反映する
+        var updateData = _salesDetails[dialogResult.RowIndex];
+
+        if (dialogResult.ItemCode! == "")
+        {
+            return;
+        }
+
+        //検索結果を反映       
+        updateData.ItemCode = dialogResult.ItemCode!;
+        updateData.ItemName = dialogResult.ItemName!;
+        updateData.UnitPrice = dialogResult.UnitPrice;
+        updateData.Amount = Math.Ceiling(updateData.Quantity * updateData.UnitPrice);
+        updateData.SalesTax = Math.Ceiling(updateData.Amount * 0.1M);
+
+        //変更内容を反映
+        _grid!.NotifyUpdateItem(_salesDetails, dialogResult.RowIndex, updateData);
+
+        this.StateHasChanged();
+    }
+
+
+    //グリッド
     private IgbGrid? _grid;
 
+    //新規データ登録用
     public int SlipNumber { get; set; }
 
     public int RowNumber { get; set; } = 1;
@@ -232,11 +287,11 @@
 
     public decimal SalesTax { get; set; } = 0;
 
-
+    //エラーメッセージ
     private string message = "";
     private string errorMessage = "";
 
-
+    //グリッドのViewModel
     private List<SalesDetailViewModel> _salesDetails = new();
 
 
@@ -325,6 +380,9 @@
         this.StateHasChanged();
     }
 
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
     protected override void OnInitialized()
     {
         //売上明細一覧データの取得
@@ -342,7 +400,11 @@
 
     }
 
-    private void OnClickCell(IgbCellTemplateContext context)
+    /// <summary>
+    /// 行削除ボタン
+    /// </summary>
+    /// <param name="context"></param>
+    private void OnClickCellRemove(IgbCellTemplateContext context)
     {
         var grid = context.Parent as IgbGrid;
         if (grid == null) return;
@@ -356,6 +418,8 @@
         grid.NotifyRemoveItem(_salesDetails, rowIndex, removeData);
     }
 
+
+    //以下、GridのCellイベント
     private async Task OnValidationStatusChange(IgbGridValidationStatusEventArgs args)
     {
         Console.WriteLine(args);

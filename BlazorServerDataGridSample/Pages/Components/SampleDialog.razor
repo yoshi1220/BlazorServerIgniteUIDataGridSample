@@ -1,0 +1,128 @@
+﻿<div class="modal fade @classShow" tabindex="-1" style="display: @display;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+            </div>
+
+            <div class="modal-body">
+                @Message
+            </div>
+
+            <div class="modal-body">
+                <p>呼び出し元の値:</p>
+                <p>@ItemCode</p>
+                <p>@ItemName</p>
+            </div>
+
+            <div class="modal-body">
+                <p>サンプルとして以下の値を呼び出し元の行にセットします:</p>
+                <p>S005</p>
+                <p>商品5</p>
+                <p>単価555円</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="() => SelectAction(false)">@CancelButtonCaption</button>
+                <button type="button" class="btn btn-primary" @onclick="() => SelectAction(true)">@OKButtonCaption</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop fade @classShow" style="display: @display;"></div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "Dialog title";
+
+    [Parameter]
+    public string Message { get; set; } = "Message";
+
+    [Parameter]
+    public string? OKButtonCaption { get; set; }
+
+    [Parameter]
+    public string? CancelButtonCaption { get; set; }
+
+    [Parameter]
+    public EventCallback<ItemSearchResultViewModel> ActionSelected { get; set; }
+
+    private string display = "none;";
+    private string classShow = "";
+
+    public string? ItemCode { get; set; }
+    public string? ItemName { get; set; }
+    public int RowIndex { get; set; }
+
+    public async Task ShowDialog(IgbCellTemplateContext context, IList<SalesDetailViewModel> salesDetail)
+    {
+        //ダイアログの表示処理
+        display = "block";
+
+        await Task.Delay(50);
+
+        classShow = "show";
+
+        StateHasChanged();
+
+        //元のグリッドの値を取得ス
+        var grid = context.Parent as IgbGrid;
+        if (grid == null) return;
+
+        var RowIndex = context.Cell.Id.RowIndex;
+        if (RowIndex == -1) return;
+
+        //検索元の行の商品を表示する
+        var searchData = salesDetail[RowIndex];
+        ItemCode = searchData.ItemCode;
+        ItemName = searchData.ItemName;
+    }
+
+    private async Task HideDialog()
+    {
+        classShow = "";
+        await Task.Delay(200);
+        display = "none";
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// 検索結果の反映処理
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    private async Task SelectAction(bool value)
+    {
+        ItemSearchResultViewModel model = new();
+
+
+        if (value)
+        {
+            model.RowIndex = RowIndex;
+            model.ItemCode = "S005";
+            model.ItemName = "商品5";
+            model.UnitPrice = 555;
+        }
+        else
+        {
+            model.RowIndex = RowIndex;
+            model.ItemCode = "";
+            model.ItemName = "";
+            model.UnitPrice = 0;
+        }
+
+        await ReturnResult(model);
+    }
+
+    /// <summary>
+    /// 呼び出し元に結果を返す
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    private async Task ReturnResult(ItemSearchResultViewModel value)
+    {
+        await HideDialog();
+        await ActionSelected.InvokeAsync(value);
+    }
+}
