@@ -299,8 +299,6 @@
         message = "";
         errorMessage = "";
 
-        var tempDetails = new List<SalesDetailViewModel>(_salesDetails);
-
         var newRow = new SalesDetailViewModel();
         newRow.SlipNumber = SlipNumber;
         newRow.RowNumber = RowNumber;
@@ -311,13 +309,10 @@
         newRow.Amount = Amount;
         newRow.SalesTax = SalesTax;
 
-        tempDetails.Add(newRow);
-
-        _salesDetails = tempDetails;
+        _salesDetails.Add(newRow);
 
         RowNumber++;
-
-        this.StateHasChanged();
+        _grid?.NotifyInsertItem(_salesDetails, RowNumber, newRow);
     }
 
     //明細データの更新処理
