@@ -82,6 +82,7 @@
 
             <IgbGrid Data="_salesDetails"
                  Height="600px"
+                 AutoGenerate="false"
                  ValidationStatusChange="OnValidationStatusChange"
                  CellEdit="OnCellEdit"
                  CellEditEnter="OnCellEditEnter"
@@ -389,7 +390,7 @@
         _salesDetails = SalesDetailService.GetDispAll().ToList();
 
         //伝票番号の最大値
-        SlipNumber = _salesDetails.Max(n => n.SlipNumber) + 1;
+        SlipNumber = _salesDetails.Select(n => n.SlipNumber).DefaultIfEmpty(0).Max() + 1;
 
         //数量、単価初期値
         this.Quantity = 12;
