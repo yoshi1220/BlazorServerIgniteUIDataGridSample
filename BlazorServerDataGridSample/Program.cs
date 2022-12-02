@@ -22,10 +22,11 @@ builder.Services.AddDbContext<SampleDbContext>(options =>
 
 //RepositoryŠÖ˜A
 builder.Services.AddScoped<ISalesDetailRepository, SalesDetailRepository>();
-//builder.Services.AddScoped<IUserRepository, UserRepositoryDapper>(); //Dapper‚ğg‚¤ê‡
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
 
 //ServiceŠÖ˜A            
 builder.Services.AddScoped<ISalesDetailService, SalesDetailService>();
+builder.Services.AddScoped<IItemService, ItemService>();
 
 
 //Ignite UI for Blazor

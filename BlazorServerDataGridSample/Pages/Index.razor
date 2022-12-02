@@ -2,7 +2,6 @@
 
 @inject ISalesDetailService SalesDetailService;
 @inject IIgniteUIBlazor IgniteUIBlazor
-@inject IJSRuntime JS
 
 <PageTitle>DataGrid</PageTitle>
 <h3>Ignite UI for Blazor New Data Grid Sample</h3>
@@ -111,6 +110,8 @@
 
                 <IgbColumnLayout Header="Detail"
                              Pinned="true">
+
+
                     <IgbColumn Field="ItemCode"
                            RowStart="1"
                            ColStart="1"
@@ -184,6 +185,15 @@
                             </select>
                         </BodyTemplate>
                     </IgbColumn>
+                    <IgbColumn RowStart="1"
+                           ColStart="2"
+                           Header="カスタム列2">
+                        <BodyTemplate>
+                            <input style="width:100px"> - <input style="width:20px">
+                            <br>
+                            <input type="checkbox"> チェックボックス
+                        </BodyTemplate>
+                    </IgbColumn>
                 </IgbColumnLayout>
 
                 @*削除ボタン*@
@@ -206,10 +216,9 @@
 }
 
 <SampleDialog @ref="sampleDialog"
-              Title="検索画面サンプル"
-              Message="検索一覧が表示されます。"
-              OKButtonCaption="Yes"
-              CancelButtonCaption="No"
+              Title="商品検索画面"
+              OKButtonCaption="OK"
+              CancelButtonCaption="Cancel"
               ActionSelected="ActionSelected">
 </SampleDialog>
 
@@ -228,7 +237,7 @@
             return;
         }
 
-        //検索結果を反映       
+        //検索結果を反映
         updateData.ItemCode = dialogResult.ItemCode!;
         updateData.ItemName = dialogResult.ItemName!;
         updateData.UnitPrice = dialogResult.UnitPrice;

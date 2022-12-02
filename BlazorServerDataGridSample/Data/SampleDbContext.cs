@@ -8,6 +8,8 @@ namespace BlazorServerDataGridSample.Data
 
         public DbSet<SalesDetail> SalesDetails { get; set; }
 
+        public DbSet<Item> Items { get; set; }
+
         public SampleDbContext(DbContextOptions<SampleDbContext> options) : base(options)
         {
         }
@@ -29,6 +31,20 @@ namespace BlazorServerDataGridSample.Data
                         UnitPrice = 330,
                         Amount = 990,
                         SalesTax = 99
+                    }
+                );
+
+
+            modelBuilder.Entity<Item>()
+               .ToTable("Items");
+            modelBuilder.Entity<Item>()
+                .HasData(
+                    new Item
+                    {
+                        Id = 1,
+                        ItemCode = "S001",
+                        ItemName = "商品1",
+                        UnitPrice = 330
                     }
                 );
         }

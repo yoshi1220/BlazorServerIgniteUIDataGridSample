@@ -1,4 +1,7 @@
-﻿<div class="modal fade @classShow" tabindex="-1" style="display: @display;">
+﻿@inject IItemService ItemService;
+@inject IIgniteUIBlazor IgniteUIBlazor
+
+<div class="modal fade @classShow" tabindex="-1" style="display: @display;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -6,13 +9,14 @@
             </div>
 
             <div class="modal-body">
-                @Message
-            </div>
-
-            <div class="modal-body">
-                <p>呼び出し元の値:</p>
-                <p>@ItemCode</p>
-                <p>@ItemName</p>
+                <div class="container vertical">
+                    <div class="container vertical fill">
+                        <IgbGrid Data="_items"
+                                 Height="300px"
+                                 DisplayDensity="DisplayDensity.Compact">
+                        </IgbGrid>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-body">
@@ -54,6 +58,18 @@
     public string? ItemCode { get; set; }
     public string? ItemName { get; set; }
     public int RowIndex { get; set; }
+
+    List<ItemViewModel> _items = new();
+
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        //売上明細一覧データの取得
+        _items = ItemService.GetDispAll().ToList();
+
+    }
 
     public async Task ShowDialog(IgbCellTemplateContext context, IList<SalesDetailViewModel> salesDetail)
     {
