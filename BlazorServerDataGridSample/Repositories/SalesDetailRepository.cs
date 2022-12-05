@@ -4,36 +4,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlazorServerDataGridSample.Repositories;
 
-public class SalesDetailRepository : DetailRepository<SalesDetail>, ISalesDetailRepository
+public class SalesDetailRepository : DetailRepository<SampleDbContext, SalesDetail>, ISalesDetailRepository
 {
-    public SalesDetailRepository(SampleDbContext context, ILogger<SalesDetailRepository> logger)
+    public SalesDetailRepository(IDbContextFactory<SampleDbContext> context, ILogger<SalesDetailRepository> logger)
         : base(context, logger)
     {
     }
 
-    public SampleDbContext? SampleDbContext
-    {
-        get { return _context as SampleDbContext; }
-    }
-
     public void UpdateAll(IList<SalesDetail> entities)
     {
+        using var context = _contextFactory.CreateDbContext();
         foreach (var item in entities)
         {
             if (item.Id != 0)
             {
-                var entry = _context.Set<SalesDetail>().Find(item.Id);
+                var entry = context.Set<SalesDetail>().Find(item.Id);
                 _mapper.Map(item, entry);
             }
             else
             {
-                _context.Set<SalesDetail>().Add(item);
+                context.Set<SalesDetail>().Add(item);
             }
         }
 
         try
         {
-            _context.SaveChanges();
+            context.SaveChanges();
             //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
         }
         catch (DbUpdateConcurrencyException ex)

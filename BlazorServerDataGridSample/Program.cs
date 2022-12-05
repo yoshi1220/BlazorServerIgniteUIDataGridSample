@@ -11,7 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 //DBŠÖ˜A
-builder.Services.AddDbContext<SampleDbContext>(options =>
+builder.Services.AddDbContextFactory<SampleDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
