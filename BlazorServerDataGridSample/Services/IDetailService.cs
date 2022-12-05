@@ -6,15 +6,15 @@
 /// <typeparam name="TEntity"></typeparam>
 public interface IDetailService<TEntity>
 {
-    TEntity Get(int id);
+    ValueTask<TEntity?> GetAsync(int id);
 
-    IEnumerable<TEntity> GetAll();
+    ValueTask<IEnumerable<TEntity>> GetAllAsync();
 
-    void Add(TEntity entity);
+    ValueTask AddAsync(TEntity entity);
 
-    void Update(TEntity entity, int id);
+    ValueTask UpdateAsync(TEntity entity, int id);
 
-    void UpdateAll(IList<TEntity> entities);
+    ValueTask UpdateAllAsync(IList<TEntity> entities);
 
-    void Remove(int id);
+    ValueTask RemoveAsync(int id);
 }

@@ -20,40 +20,41 @@ public class SalesDetailService : ISalesDetailService
         _SalesDetailRepository = SalesDetailRepository;
     }
 
-    public void Add(SalesDetailViewModel entity)
+    public ValueTask AddAsync(SalesDetailViewModel entity)
     {
-        _SalesDetailRepository.Add(_mapper.Map<SalesDetail>(entity));
+        return _SalesDetailRepository.AddAsync(_mapper.Map<SalesDetail>(entity));
     }
 
-    public SalesDetailViewModel Get(int id)
+    public async ValueTask<SalesDetailViewModel?> GetAsync(int id)
     {
-        return _mapper.Map<SalesDetailViewModel>( _SalesDetailRepository.Get(id));
+        var salesDetail = await _SalesDetailRepository.GetAsync(id);
+        return _mapper.Map<SalesDetailViewModel>(salesDetail);
     }
 
     /// <summary>
     /// ユーザーデータを全件取得
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<SalesDetailViewModel> GetAll()
+    public async ValueTask<IEnumerable<SalesDetailViewModel>> GetAllAsync()
     {
-        var salesDetails = _SalesDetailRepository.GetAll();
+        var salesDetails = await _SalesDetailRepository.GetAllAsync();
         return salesDetails
             .Select(_mapper.Map<SalesDetailViewModel>)
             .ToArray();
     }
 
-    public void Remove(int id)
+    public ValueTask RemoveAsync(int id)
     {
-        _SalesDetailRepository.Remove(id);
+        return _SalesDetailRepository.RemoveAsync(id);
     }
 
-    public void Update(SalesDetailViewModel entity, int id)
+    public ValueTask UpdateAsync(SalesDetailViewModel entity, int id)
     {
-        _SalesDetailRepository.Update(_mapper.Map<SalesDetail>(entity), id);
+        return _SalesDetailRepository.UpdateAsync(_mapper.Map<SalesDetail>(entity), id);
     }
 
-    public void UpdateAll(IList<SalesDetailViewModel> entities)
+    public ValueTask UpdateAllAsync(IList<SalesDetailViewModel> entities)
     {
-        _SalesDetailRepository.UpdateAll(entities.Select(_mapper.Map<SalesDetail>).ToList());
+        return _SalesDetailRepository.UpdateAllAsync(entities.Select(_mapper.Map<SalesDetail>));
     }
 }

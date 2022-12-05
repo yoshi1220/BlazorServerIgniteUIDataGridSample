@@ -11,26 +11,26 @@ public class SalesDetailRepository : DetailRepository<SampleDbContext, SalesDeta
     {
     }
 
-    public void UpdateAll(IList<SalesDetail> entities)
+    public async ValueTask UpdateAllAsync(IEnumerable<SalesDetail> entities)
     {
-        using var context = _contextFactory.CreateDbContext();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         foreach (var item in entities)
         {
             if (item.Id != 0)
             {
-                var entry = context.Set<SalesDetail>().Find(item.Id);
+                var entry = await context.Set<SalesDetail>().FindAsync(item.Id);
+                if (entry == null) throw new InvalidOperationException($"指定されたエンティティを更新しようとしましたが見つかりません。id = {item.Id}");
                 _mapper.Map(item, entry);
             }
             else
             {
-                context.Set<SalesDetail>().Add(item);
+                await context.Set<SalesDetail>().AddAsync(item);
             }
         }
 
         try
         {
-            context.SaveChanges();
-            //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException ex)
         {
