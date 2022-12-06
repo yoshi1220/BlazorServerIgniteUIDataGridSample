@@ -6,6 +6,8 @@ namespace BlazorServerDataGridSample.Services
 {
     interface IItemService : IMasterService<Item>
     {
-        IList<ItemViewModel> GetDispAll();
+        //IList<ItemViewModel> GetDispAll();
+
+        ValueTask<IEnumerable<ItemViewModel>> GetDispAllAsync();
     }
 }

@@ -9,62 +9,55 @@ namespace BlazorServerDataGridSample.Services
     {
         private readonly IItemRepository _ItemRepository;
 
+        private static readonly IMapper _mapper = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Item, ItemViewModel>();
+            cfg.CreateMap<ItemViewModel, Item>();
+        }).CreateMapper();
+
         public ItemService(IItemRepository ItemRepository)
         {
             _ItemRepository = ItemRepository;
         }
 
-        public void Add(Item entity)
+        public ValueTask AddAsync(Item entity)
         {
-            _ItemRepository.Add(entity);
+            return _ItemRepository.AddAsync(_mapper.Map<Item>(entity));
         }
 
-        public Item Get(int id)
+        public async ValueTask<Item?> GetAsync(int id)
         {
-            return _ItemRepository.Get(id);
+            return await _ItemRepository.GetAsync(id);
         }
+
 
         /// <summary>
         /// ユーザーデータを全件取得
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Item> GetAll()
+        public async ValueTask<IEnumerable<Item>> GetAllAsync()
         {
-            return _ItemRepository.GetAll();
+            return await _ItemRepository.GetAllAsync();
         }
 
 
-        public IList<ItemViewModel> GetDispAll()
+        public async ValueTask<IEnumerable<ItemViewModel>> GetDispAllAsync()
         {
-            var items = GetAll();
-            List<ItemViewModel> itemViewModels = new();
-
-            // Mapするモデルの設定
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Item, ItemViewModel>();
-            });
-
-            // Mapperを作成
-            var mapper = config.CreateMapper();
-
-            foreach (var item in items)
-            {
-                var newItem = mapper.Map<ItemViewModel>(item);
-                itemViewModels.Add(newItem);
-            }
-
-            return itemViewModels;
+            var items = await _ItemRepository.GetAllAsync();
+            return items
+                .Select(_mapper.Map<ItemViewModel>)
+                .ToArray();
         }
 
-        public void Remove(int id)
+
+        public ValueTask RemoveAsync(int id)
         {
-            _ItemRepository.Remove(id);
+            return _ItemRepository.RemoveAsync(id);
         }
 
-        public void Update(Item entity, int id)
+        public ValueTask UpdateAsync(Item entity, int id)
         {
-            _ItemRepository.Update(entity, id);
+            return _ItemRepository.UpdateAsync(_mapper.Map<Item>(entity), id);
         }
 
     }

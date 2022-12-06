@@ -64,10 +64,11 @@
     /// <summary>
     /// 初期化処理
     /// </summary>
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+
         //売上明細一覧データの取得
-        _items = ItemService.GetDispAll().ToList();
+        _items = (await ItemService.GetDispAllAsync()).ToList();
 
     }
 
