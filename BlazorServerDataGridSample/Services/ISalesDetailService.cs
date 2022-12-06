@@ -3,7 +3,6 @@ using BlazorServerDataGridSample.Data.ViewModels;
 
 namespace BlazorServerDataGridSample.Services;
 
-interface ISalesDetailService : IDetailService<SalesDetail>
+interface ISalesDetailService : IDetailService<SalesDetailViewModel>
 {
-    IList<SalesDetailViewModel> GetDispAll();
 }

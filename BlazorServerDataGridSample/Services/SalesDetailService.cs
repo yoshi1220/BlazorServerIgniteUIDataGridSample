@@ -9,51 +9,37 @@ public class SalesDetailService : ISalesDetailService
 {
     private readonly ISalesDetailRepository _SalesDetailRepository;
 
+    private static readonly IMapper _mapper = new MapperConfiguration(cfg =>
+    {
+        cfg.CreateMap<SalesDetail, SalesDetailViewModel>();
+        cfg.CreateMap<SalesDetailViewModel, SalesDetail>();
+    }).CreateMapper();
+
     public SalesDetailService(ISalesDetailRepository SalesDetailRepository)
     {
         _SalesDetailRepository = SalesDetailRepository;
     }
 
-    public void Add(SalesDetail entity)
+    public void Add(SalesDetailViewModel entity)
     {
-        _SalesDetailRepository.Add(entity);
+        _SalesDetailRepository.Add(_mapper.Map<SalesDetail>(entity));
     }
 
-    public SalesDetail Get(int id)
+    public SalesDetailViewModel Get(int id)
     {
-        return _SalesDetailRepository.Get(id);
+        return _mapper.Map<SalesDetailViewModel>( _SalesDetailRepository.Get(id));
     }
 
     /// <summary>
     /// ユーザーデータを全件取得
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<SalesDetail> GetAll()
+    public IEnumerable<SalesDetailViewModel> GetAll()
     {
-        return _SalesDetailRepository.GetAll();
-    }
-
-    public IList<SalesDetailViewModel> GetDispAll()
-    {
-        var salesDetails = GetAll();
-        List<SalesDetailViewModel> salesDetailViewModels = new();
-
-        // Mapするモデルの設定
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<SalesDetail, SalesDetailViewModel>();
-        });
-
-        // Mapperを作成
-        var mapper = config.CreateMapper();
-
-        foreach (var item in salesDetails)
-        {
-            var newItem = mapper.Map<SalesDetailViewModel>(item);
-            salesDetailViewModels.Add(newItem);
-        }
-
-        return salesDetailViewModels;
+        var salesDetails = _SalesDetailRepository.GetAll();
+        return salesDetails
+            .Select(_mapper.Map<SalesDetailViewModel>)
+            .ToArray();
     }
 
     public void Remove(int id)
@@ -61,13 +47,13 @@ public class SalesDetailService : ISalesDetailService
         _SalesDetailRepository.Remove(id);
     }
 
-    public void Update(SalesDetail entity, int id)
+    public void Update(SalesDetailViewModel entity, int id)
     {
-        _SalesDetailRepository.Update(entity, id);
+        _SalesDetailRepository.Update(_mapper.Map<SalesDetail>(entity), id);
     }
 
-    public void UpdateAll(IList<SalesDetail> entities)
+    public void UpdateAll(IList<SalesDetailViewModel> entities)
     {
-        _SalesDetailRepository.UpdateAll(entities);
+        _SalesDetailRepository.UpdateAll(entities.Select(_mapper.Map<SalesDetail>).ToList());
     }
 }

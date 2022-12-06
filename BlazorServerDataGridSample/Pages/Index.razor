@@ -299,23 +299,9 @@
         message = "";
         errorMessage = "";
 
-        // Mapするモデルの設定
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<SalesDetailViewModel, SalesDetail>();
-        });
-
-        // Mapperを作成
-        var mapper = config.CreateMapper();
-
-        // SalesDetailViewModelのデータがSalesDetailの型でマッピングされる
-        var salesData = _salesDetails
-            .Select(mapper.Map<SalesDetail>)
-            .ToList();
-
         try
         {
-            SalesDetailService.UpdateAll(salesData);
+            SalesDetailService.UpdateAll(_salesDetails);
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -334,7 +320,7 @@
     protected override void OnInitialized()
     {
         //売上明細一覧データの取得
-        _salesDetails = SalesDetailService.GetDispAll().ToList();
+        _salesDetails = SalesDetailService.GetAll().ToList();
 
         //伝票番号の最大値
         newSalesDetail.SlipNumber = _salesDetails.Select(n => n.SlipNumber).DefaultIfEmpty(0).Max() + 1;
