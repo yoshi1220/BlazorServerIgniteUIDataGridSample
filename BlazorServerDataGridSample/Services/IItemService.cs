@@ -2,12 +2,11 @@
 using BlazorServerDataGridSample.Data.ViewModels;
 using BlazorServerDataGridSample.Services;
 
-namespace BlazorServerDataGridSample.Services
-{
-    interface IItemService : IMasterService<Item>
-    {
-        //IList<ItemViewModel> GetDispAll();
+namespace BlazorServerDataGridSample.Services;
 
-        ValueTask<IEnumerable<ItemViewModel>> GetDispAllAsync();
-    }
+interface IItemService : IMasterService<Item>
+{
+    //IList<ItemViewModel> GetDispAll();
+
+    ValueTask<IEnumerable<ItemViewModel>> GetDispAllAsync();
 }
