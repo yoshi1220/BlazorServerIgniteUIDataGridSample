@@ -293,7 +293,7 @@
     }
 
     //明細データの更新処理
-    private void UpdateDetailsDataButtonClick()
+    private async Task UpdateDetailsDataButtonClick()
     {
         //処理判定フラグ等の初期化
         message = "";
@@ -301,7 +301,7 @@
 
         try
         {
-            SalesDetailService.UpdateAll(_salesDetails);
+            await SalesDetailService.UpdateAllAsync(_salesDetails);
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -317,10 +317,10 @@
     /// <summary>
     /// 初期化処理
     /// </summary>
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         //売上明細一覧データの取得
-        _salesDetails = SalesDetailService.GetAll().ToList();
+        _salesDetails = (await SalesDetailService.GetAllAsync()).ToList();
 
         //伝票番号の最大値
         newSalesDetail.SlipNumber = _salesDetails.Select(n => n.SlipNumber).DefaultIfEmpty(0).Max() + 1;

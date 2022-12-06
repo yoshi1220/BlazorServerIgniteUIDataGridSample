@@ -29,46 +29,46 @@ public class MasterRepository<TDbContext, TEntity> : IMasterRepository<TEntity>
         _mapper = config.CreateMapper();
     }
 
-    public void Add(TEntity entity)
+    public async ValueTask AddAsync(TEntity entity)
     {
-        using var context = _contextFactory.CreateDbContext();
-        context.Set<TEntity>().Add(entity);
-        context.SaveChanges();
-        //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        await context.Set<TEntity>().AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
-    public TEntity Get(int id)
+    public async ValueTask<TEntity?> GetAsync(int id)
     {
-        using var context = _contextFactory.CreateDbContext();
-        return context.Set<TEntity>().Find(id)!;
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Set<TEntity>().FindAsync(id)!;
     }
 
-    public virtual IEnumerable<TEntity> GetAll()
+    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync()
     {
-        using var context = _contextFactory.CreateDbContext();
-        return context.Set<TEntity>().ToList();
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Set<TEntity>().ToArrayAsync();
     }
 
-    public void Remove(int id)
+    public async ValueTask RemoveAsync(int id)
     {
-        using var context = _contextFactory.CreateDbContext();
-        var entry = context.Set<TEntity>().Find(id);
-        context.Set<TEntity>().Remove(entry!);
-        context.SaveChanges();
-        //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var entry = await context.Set<TEntity>().FindAsync(id);
+        if (entry == null) throw new InvalidOperationException($"指定されたエンティティを削除しようとしましたが見つかりません。id = {id}");
+
+        context.Set<TEntity>().Remove(entry);
+        await context.SaveChangesAsync();
     }
 
-    public void Update(TEntity entity, int id)
+    public async ValueTask UpdateAsync(TEntity entity, int id)
     {
-        using var context = _contextFactory.CreateDbContext();
-        var entry = context.Set<TEntity>().Find(id);
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var entry = await context.Set<TEntity>().FindAsync(id);
+        if (entry == null) throw new InvalidOperationException($"指定されたエンティティを更新しようとしましたが見つかりません。id = {id}");
 
         _mapper.Map(entity, entry);
 
         try
         {
-            context.SaveChanges();
-            //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException ex)
         {
