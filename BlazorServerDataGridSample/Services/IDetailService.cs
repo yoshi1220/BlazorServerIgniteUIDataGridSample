@@ -1,19 +1,20 @@
-﻿namespace BlazorServerDataGridSample.Services
+﻿namespace BlazorServerDataGridSample.Services;
+
+/// <summary>
+/// 明細入力用サービスインターフェース
+/// </summary>
+/// <typeparam name="TEntity"></typeparam>
+public interface IDetailService<TEntity>
 {
-    /// <summary>
-    /// 明細入力用サービスインターフェース
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    public interface IDetailService<TEntity>
-    {
-        TEntity Get(int id);
-        IEnumerable<TEntity> GetAll();
-        void Add(TEntity entity);
+    ValueTask<TEntity?> GetAsync(int id);
 
-        void Update(TEntity entity, int id);
+    ValueTask<IEnumerable<TEntity>> GetAllAsync();
 
-        void UpdateAll(IList<TEntity> entities);
+    ValueTask AddAsync(TEntity entity);
 
-        void Remove(int id);
-    }
+    ValueTask UpdateAsync(TEntity entity, int id);
+
+    ValueTask UpdateAllAsync(IList<TEntity> entities);
+
+    ValueTask RemoveAsync(int id);
 }

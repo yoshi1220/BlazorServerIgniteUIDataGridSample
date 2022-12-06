@@ -2,8 +2,6 @@ using BlazorServerDataGridSample.Data;
 using BlazorServerDataGridSample.Repositories;
 using BlazorServerDataGridSample.Services;
 using IgniteUI.Blazor.Controls;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-
-
 //DBŠÖ˜A
-builder.Services.AddDbContext<SampleDbContext>(options =>
+builder.Services.AddDbContextFactory<SampleDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
@@ -27,7 +23,6 @@ builder.Services.AddScoped<IItemRepository, ItemRepository>();
 //ServiceŠÖ˜A            
 builder.Services.AddScoped<ISalesDetailService, SalesDetailService>();
 builder.Services.AddScoped<IItemService, ItemService>();
-
 
 //Ignite UI for Blazor
 builder.Services.AddIgniteUIBlazor(

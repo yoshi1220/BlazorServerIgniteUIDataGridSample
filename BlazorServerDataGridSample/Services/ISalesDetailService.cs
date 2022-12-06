@@ -1,10 +1,8 @@
 ﻿using BlazorServerDataGridSample.Data.Models;
 using BlazorServerDataGridSample.Data.ViewModels;
 
-namespace BlazorServerDataGridSample.Services
+namespace BlazorServerDataGridSample.Services;
+
+interface ISalesDetailService : IDetailService<SalesDetailViewModel>
 {
-    interface ISalesDetailService : IDetailService<SalesDetail>
-    {
-        IList<SalesDetailViewModel> GetDispAll();
-    }
 }

@@ -2,51 +2,40 @@
 using BlazorServerDataGridSample.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorServerDataGridSample.Repositories
+namespace BlazorServerDataGridSample.Repositories;
+
+public class SalesDetailRepository : DetailRepository<SampleDbContext, SalesDetail>, ISalesDetailRepository
 {
-    public class SalesDetailRepository : DetailRepository<SalesDetail>, ISalesDetailRepository
+    public SalesDetailRepository(IDbContextFactory<SampleDbContext> context, ILogger<SalesDetailRepository> logger)
+        : base(context, logger)
     {
-        public SalesDetailRepository(SampleDbContext context, ILogger<SalesDetailRepository> logger)
-            : base(context, logger)
-        {
-
-        }
-
-        public SampleDbContext? SampleDbContext
-        {
-            get { return _context as SampleDbContext; }
-        }
-
-        public void UpdateAll(IList<SalesDetail> entities)
-        {
-            foreach (var item in entities)
-            {
-                if (item.Id != 0)
-                {
-                    var entry = _context.Set<SalesDetail>().Find(item.Id);
-                    _mapper.Map(item, entry);
-                }
-                else
-                {
-                    _context.Set<SalesDetail>().Add(item);
-                }
-
-            }
-
-
-
-            try
-            {
-                _context.SaveChanges();
-                //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _logger.LogError(ex, ex.Message); // ログ出力等をここで実装
-                throw;
-            }
-
-        }
     }
 
+    public async ValueTask UpdateAllAsync(IEnumerable<SalesDetail> entities)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        foreach (var item in entities)
+        {
+            if (item.Id != 0)
+            {
+                var entry = await context.Set<SalesDetail>().FindAsync(item.Id);
+                if (entry == null) throw new InvalidOperationException($"指定されたエンティティを更新しようとしましたが見つかりません。id = {item.Id}");
+                _mapper.Map(item, entry);
+            }
+            else
+            {
+                await context.Set<SalesDetail>().AddAsync(item);
+            }
+        }
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogError(ex, ex.Message); // ログ出力等をここで実装
+            throw;
+        }
+    }
 }

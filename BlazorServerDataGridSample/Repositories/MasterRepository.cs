@@ -1,74 +1,79 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
+namespace BlazorServerDataGridSample.Repositories;
 
-namespace BlazorServerDataGridSample.Repositories
+public class MasterRepository<TDbContext, TEntity> : IMasterRepository<TEntity> 
+    where TDbContext : DbContext
+    where TEntity : class
 {
-    public class MasterRepository<TEntity> : IMasterRepository<TEntity> where TEntity : class
+
+    private readonly ILogger<IMasterRepository<TEntity>> _logger;
+
+    protected readonly IDbContextFactory<TDbContext> _contextFactory;
+
+    protected readonly IMapper _mapper;
+
+    public MasterRepository(IDbContextFactory<TDbContext> contextFactory, ILogger<IMasterRepository<TEntity>> logger)
     {
+        _contextFactory = contextFactory;
+        _logger = logger;
 
-        private readonly ILogger<IMasterRepository<TEntity>> _logger;
-
-        protected readonly DbContext _context;
-        protected readonly IMapper _mapper;
-        public MasterRepository(DbContext context, ILogger<IMasterRepository<TEntity>> logger)
+        // Mapするモデルの設定
+        var config = new MapperConfiguration(cfg =>
         {
-            _context = context;
-            _logger = logger;
+            cfg.CreateMap<TEntity, TEntity>();
+        });
 
-            // Mapするモデルの設定
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<TEntity, TEntity>();
-            });
+        // Mapperを作成
+        _mapper = config.CreateMapper();
+    }
 
-            // Mapperを作成
-            _mapper = config.CreateMapper();
+    public async ValueTask AddAsync(TEntity entity)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        await context.Set<TEntity>().AddAsync(entity);
+        await context.SaveChangesAsync();
+    }
 
+    public async ValueTask<TEntity?> GetAsync(int id)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Set<TEntity>().FindAsync(id)!;
+    }
+
+    public virtual async ValueTask<IEnumerable<TEntity>> GetAllAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Set<TEntity>().ToArrayAsync();
+    }
+
+    public async ValueTask RemoveAsync(int id)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var entry = await context.Set<TEntity>().FindAsync(id);
+        if (entry == null) throw new InvalidOperationException($"指定されたエンティティを削除しようとしましたが見つかりません。id = {id}");
+
+        context.Set<TEntity>().Remove(entry);
+        await context.SaveChangesAsync();
+    }
+
+    public async ValueTask UpdateAsync(TEntity entity, int id)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var entry = await context.Set<TEntity>().FindAsync(id);
+        if (entry == null) throw new InvalidOperationException($"指定されたエンティティを更新しようとしましたが見つかりません。id = {id}");
+
+        _mapper.Map(entity, entry);
+
+        try
+        {
+            await context.SaveChangesAsync();
         }
-
-        public void Add(TEntity entity)
+        catch (DbUpdateConcurrencyException ex)
         {
-            _context.Set<TEntity>().Add(entity);
-            _context.SaveChanges();
-            //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
-        }
-
-        public TEntity Get(int id)
-        {
-            return _context.Set<TEntity>().Find(id)!;
-        }
-
-        public virtual IEnumerable<TEntity> GetAll()
-        {
-            return _context.Set<TEntity>().ToList();
-        }
-
-        public void Remove(int id)
-        {
-            var entry = _context.Set<TEntity>().Find(id);
-            _context.Set<TEntity>().Remove(entry!);
-            _context.SaveChanges();
-            //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
-        }
-
-        public void Update(TEntity entity, int id)
-        {
-            var entry = _context.Set<TEntity>().Find(id);
-
-            _mapper.Map(entity, entry);
-
-            try
-            {
-                _context.SaveChanges();
-                //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _logger.LogError(ex, ex.Message); // ログ出力等をここで実装
-                throw;
-            }
-
+            _logger.LogError(ex, ex.Message); // ログ出力等をここで実装
+            throw;
         }
     }
 }

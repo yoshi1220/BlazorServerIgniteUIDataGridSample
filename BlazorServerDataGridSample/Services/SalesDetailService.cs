@@ -2,76 +2,59 @@
 using BlazorServerDataGridSample.Data.Models;
 using BlazorServerDataGridSample.Data.ViewModels;
 using BlazorServerDataGridSample.Repositories;
-using System;
-using System.Collections.Generic;
 
-namespace BlazorServerDataGridSample.Services
+namespace BlazorServerDataGridSample.Services;
+
+public class SalesDetailService : ISalesDetailService
 {
-    public class SalesDetailService : ISalesDetailService
+    private readonly ISalesDetailRepository _SalesDetailRepository;
+
+    private static readonly IMapper _mapper = new MapperConfiguration(cfg =>
     {
-        private readonly ISalesDetailRepository _SalesDetailRepository;
+        cfg.CreateMap<SalesDetail, SalesDetailViewModel>();
+        cfg.CreateMap<SalesDetailViewModel, SalesDetail>();
+    }).CreateMapper();
 
-        public SalesDetailService(ISalesDetailRepository SalesDetailRepository)
-        {
-            _SalesDetailRepository = SalesDetailRepository;
-        }
+    public SalesDetailService(ISalesDetailRepository SalesDetailRepository)
+    {
+        _SalesDetailRepository = SalesDetailRepository;
+    }
 
-        public void Add(SalesDetail entity)
-        {
-            _SalesDetailRepository.Add(entity);
-        }
+    public ValueTask AddAsync(SalesDetailViewModel entity)
+    {
+        return _SalesDetailRepository.AddAsync(_mapper.Map<SalesDetail>(entity));
+    }
 
-        public SalesDetail Get(int id)
-        {
-            return _SalesDetailRepository.Get(id);
-        }
+    public async ValueTask<SalesDetailViewModel?> GetAsync(int id)
+    {
+        var salesDetail = await _SalesDetailRepository.GetAsync(id);
+        return _mapper.Map<SalesDetailViewModel>(salesDetail);
+    }
 
-        /// <summary>
-        /// ユーザーデータを全件取得
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<SalesDetail> GetAll()
-        {
-            return _SalesDetailRepository.GetAll();
-        }
+    /// <summary>
+    /// ユーザーデータを全件取得
+    /// </summary>
+    /// <returns></returns>
+    public async ValueTask<IEnumerable<SalesDetailViewModel>> GetAllAsync()
+    {
+        var salesDetails = await _SalesDetailRepository.GetAllAsync();
+        return salesDetails
+            .Select(_mapper.Map<SalesDetailViewModel>)
+            .ToArray();
+    }
 
-        public IList<SalesDetailViewModel> GetDispAll()
-        {
-            var salesDetails = GetAll();
-            List<SalesDetailViewModel> salesDetailViewModels = new();
+    public ValueTask RemoveAsync(int id)
+    {
+        return _SalesDetailRepository.RemoveAsync(id);
+    }
 
-            // Mapするモデルの設定
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<SalesDetail, SalesDetailViewModel>();
-            });
+    public ValueTask UpdateAsync(SalesDetailViewModel entity, int id)
+    {
+        return _SalesDetailRepository.UpdateAsync(_mapper.Map<SalesDetail>(entity), id);
+    }
 
-            // Mapperを作成
-            var mapper = config.CreateMapper();
-
-            foreach (var item in salesDetails)
-            {
-                var newItem = mapper.Map<SalesDetailViewModel>(item);
-                salesDetailViewModels.Add(newItem);
-            }
-
-            return salesDetailViewModels;
-        }
-
-        public void Remove(int id)
-        {
-            _SalesDetailRepository.Remove(id);
-        }
-
-        public void Update(SalesDetail entity, int id)
-        {
-            _SalesDetailRepository.Update(entity, id);
-        }
-
-        public void UpdateAll(IList<SalesDetail> entities)
-        {
-            _SalesDetailRepository.UpdateAll(entities);
-        }
-
+    public ValueTask UpdateAllAsync(IList<SalesDetailViewModel> entities)
+    {
+        return _SalesDetailRepository.UpdateAllAsync(entities.Select(_mapper.Map<SalesDetail>));
     }
 }
