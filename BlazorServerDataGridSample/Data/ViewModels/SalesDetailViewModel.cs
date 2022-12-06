@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 
-namespace BlazorServerDataGridSample.Data.ViewModels
-{
+namespace BlazorServerDataGridSample.Data.ViewModels;
+
+
     [CustomValidation(typeof(SalesDetailViewModel), "SalesDetailCheck")]
     public class SalesDetailViewModel
     {
@@ -27,22 +28,20 @@ namespace BlazorServerDataGridSample.Data.ViewModels
         [Display(Name = "単価"), Range(0, int.MaxValue, ErrorMessage = "単価は 0 以上を指定してください")]
         public decimal UnitPrice { get; set; }
 
-        [Display(Name = "金額")]
-        public decimal Amount { get; set; }
 
-        [Display(Name = "消費税")]
-        public decimal SalesTax { get; set; }
+    [Display(Name = "金額")]
+    public decimal Amount { get; set; }
 
+    [Display(Name = "消費税")]
+    public decimal SalesTax { get; set; }
 
-        public static ValidationResult? SalesDetailCheck(SalesDetailViewModel model, ValidationContext context)
+    public static ValidationResult? SalesDetailCheck(SalesDetailViewModel model, ValidationContext context)
+    {
+        if (model == null)
         {
-            if (model == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            return ValidationResult.Success;
+            throw new NullReferenceException();
         }
+
 
         private static readonly IMapper Mapper = new MapperConfiguration(cfg => cfg.CreateMap<SalesDetailViewModel, SalesDetailViewModel>()).CreateMapper();
 
@@ -50,5 +49,6 @@ namespace BlazorServerDataGridSample.Data.ViewModels
         {
             return Mapper.Map<SalesDetailViewModel>(this);
         }
+
     }
 }

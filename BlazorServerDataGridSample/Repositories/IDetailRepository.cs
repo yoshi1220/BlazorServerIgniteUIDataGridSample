@@ -1,19 +1,18 @@
-﻿namespace BlazorServerDataGridSample.Repositories
+﻿namespace BlazorServerDataGridSample.Repositories;
+
+/// <summary>
+/// 明細入力用のRepositoryインターフェイス
+/// </summary>
+/// <typeparam name="TEntity"></typeparam>
+public interface IDetailRepository<TEntity> where TEntity : class
 {
-    /// <summary>
-    /// 明細入力用のRepositoryインターフェイス
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    public interface IDetailRepository<TEntity> where TEntity : class
-    {
-        TEntity Get(int id);
+    TEntity Get(int id);
 
-        IEnumerable<TEntity> GetAll();
+    IEnumerable<TEntity> GetAll();
 
-        void Add(TEntity entity);
+    void Add(TEntity entity);
 
-        void Update(TEntity entity, int id);
+    void Update(TEntity entity, int id);
 
-        void Remove(int id);
-    }
+    void Remove(int id);
 }

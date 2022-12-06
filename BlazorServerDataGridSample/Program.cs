@@ -2,8 +2,6 @@ using BlazorServerDataGridSample.Data;
 using BlazorServerDataGridSample.Repositories;
 using BlazorServerDataGridSample.Services;
 using IgniteUI.Blazor.Controls;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
-
 
 //DBŠÖ˜A
 builder.Services.AddDbContext<SampleDbContext>(options =>
@@ -26,7 +22,6 @@ builder.Services.AddScoped<ISalesDetailRepository, SalesDetailRepository>();
 
 //ServiceŠÖ˜A            
 builder.Services.AddScoped<ISalesDetailService, SalesDetailService>();
-
 
 //Ignite UI for Blazor
 builder.Services.AddIgniteUIBlazor(
