@@ -1,21 +1,22 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace BlazorServerDataGridSample.Repositories;
 
-public class MasterRepository<TEntity> : IMasterRepository<TEntity> where TEntity : class
+public class MasterRepository<TDbContext, TEntity> : IMasterRepository<TEntity> 
+    where TDbContext : DbContext
+    where TEntity : class
 {
 
     private readonly ILogger<IMasterRepository<TEntity>> _logger;
 
-    protected readonly DbContext _context;
+    protected readonly IDbContextFactory<TDbContext> _contextFactory;
 
     protected readonly IMapper _mapper;
 
-    public MasterRepository(DbContext context, ILogger<IMasterRepository<TEntity>> logger)
+    public MasterRepository(IDbContextFactory<TDbContext> contextFactory, ILogger<IMasterRepository<TEntity>> logger)
     {
-        _context = context;
+        _contextFactory = contextFactory;
         _logger = logger;
 
         // Mapするモデルの設定
@@ -30,38 +31,43 @@ public class MasterRepository<TEntity> : IMasterRepository<TEntity> where TEntit
 
     public void Add(TEntity entity)
     {
-        _context.Set<TEntity>().Add(entity);
-        _context.SaveChanges();
+        using var context = _contextFactory.CreateDbContext();
+        context.Set<TEntity>().Add(entity);
+        context.SaveChanges();
         //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
     }
 
     public TEntity Get(int id)
     {
-        return _context.Set<TEntity>().Find(id)!;
+        using var context = _contextFactory.CreateDbContext();
+        return context.Set<TEntity>().Find(id)!;
     }
 
     public virtual IEnumerable<TEntity> GetAll()
     {
-        return _context.Set<TEntity>().ToList();
+        using var context = _contextFactory.CreateDbContext();
+        return context.Set<TEntity>().ToList();
     }
 
     public void Remove(int id)
     {
-        var entry = _context.Set<TEntity>().Find(id);
-        _context.Set<TEntity>().Remove(entry!);
-        _context.SaveChanges();
+        using var context = _contextFactory.CreateDbContext();
+        var entry = context.Set<TEntity>().Find(id);
+        context.Set<TEntity>().Remove(entry!);
+        context.SaveChanges();
         //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
     }
 
     public void Update(TEntity entity, int id)
     {
-        var entry = _context.Set<TEntity>().Find(id);
+        using var context = _contextFactory.CreateDbContext();
+        var entry = context.Set<TEntity>().Find(id);
 
         _mapper.Map(entity, entry);
 
         try
         {
-            _context.SaveChanges();
+            context.SaveChanges();
             //_context.SaveChangesAsync() //非同期処理の場合はこちらを利用した実装に変更してください。
         }
         catch (DbUpdateConcurrencyException ex)
