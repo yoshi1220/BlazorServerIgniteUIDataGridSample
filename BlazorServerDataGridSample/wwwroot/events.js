@@ -86,12 +86,83 @@ igRegisterScript("WebGridCompositeSlipNumberEditCellTemplate", (ctx) => {
 
     return html`<div class="address-container--edit">
     <div>
-        <span><strong>SlipNumber:</strong></span>
-        <input id='SlipNumber' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.SlipNumber}"></input>        
+        <input id='SlipNumber' class='form-control' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.SlipNumber}"></input>        
     </div>    
     <br>
 </div>`;
 }, false);
 
+igRegisterScript("WebGridCompositeRowNumberEditCellTemplate", (ctx) => {
+    var html = window.igTemplating.html;
+    window.keyUpHandler = function () {
+        ctx.cell.row.data[window.event.target.id] = window.event.target.value;
+    }
+
+    return html`<div class="address-container--edit">
+    <div>
+        <input id='RowNumber' class='form-control' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.RowNumber}"></input>        
+    </div>    
+    <br>
+</div>`;
+}, false);
+
+
+igRegisterScript("WebGridCompositeItemCodeEditCellTemplate", (ctx) => {
+    var html = window.igTemplating.html;
+    window.keyUpHandler = function () {
+        ctx.cell.row.data[window.event.target.id] = window.event.target.value;
+    }
+
+    return html`<div class="address-container--edit">
+    <div>
+        <input id='ItemCode' class='form-control' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.ItemCode}"></input>        
+    </div>    
+    <br>
+</div>`;
+}, false);
+
+
+igRegisterScript("WebGridCompositeItemNameEditCellTemplate", (ctx) => {
+    var html = window.igTemplating.html;
+    window.keyUpHandler = function () {
+        ctx.cell.row.data[window.event.target.id] = window.event.target.value;
+    }
+
+    return html`<div class="address-container--edit">
+    <div>
+        <input id='ItemName' class='form-control' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.ItemName}"></input>        
+    </div>    
+    <br>
+</div>`;
+}, false);
+
+igRegisterScript("WebGridCompositeQuantityEditCellTemplate", (ctx) => {
+    var html = window.igTemplating.html;
+    window.keyUpHandler = function () {
+        ctx.cell.row.data[window.event.target.id] = window.event.target.value;
+    }
+
+    return html`<div class="address-container--edit">
+    <div>
+        <input id='Quantity' type='number' class='form-control' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.Quantity}"></input>        
+    </div>    
+    <br>
+</div>`;
+}, false);
+
+
+igRegisterScript("WebGridCompositeUnitPriceEditCellTemplate", (ctx) => {
+    var html = window.igTemplating.html;
+    window.keyUpHandler = function () {
+        ctx.cell.row.data[window.event.target.id] = window.event.target.value;
+    }
+
+    return html`<div class="address-container--edit">
+    <div>
+        <input id='UnitPrice' type='number' class='form-control' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.UnitPrice}"></input>        
+    </div>    
+    <br>
+</div>`;
+}, false);
 
 

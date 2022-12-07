@@ -10,7 +10,7 @@ public class SalesDetailViewModel
     [Display(Name = "Id")]
     public int Id { get; set; }
 
-    [Display(Name = "伝票番号"), Range(1, 9999, ErrorMessage = "伝票番号は 1～9999 で指定してください")]
+    [Display(Name = "伝票番号"), Range(1, 99999, ErrorMessage = "伝票番号は 1～99999 で指定してください")]
     public int SlipNumber { get; set; }
 
     [Display(Name = "行番号"), Range(1, int.MaxValue, ErrorMessage = "行番号は 1 以上を指定してください")]

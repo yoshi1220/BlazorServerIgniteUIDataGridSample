@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/index2"
 
 @inject ISalesDetailService SalesDetailService;
 @inject IIgniteUIBlazor IgniteUIBlazor
@@ -108,7 +108,8 @@
                            RowStart="1"
                            RowEnd="2"
                            ColStart="1"
-                           Header="伝票番号"
+                           Header="伝票番号" 
+                           BodyTemplateScript="WebGridCompositeSlipNumberEditCellTemplate"
                            Editable="false">
                     </IgbColumn>
                     <IgbColumn Field="RowNumber"
@@ -117,6 +118,7 @@
                            RowEnd="2"
                            ColStart="2"
                            Header="行番号"
+                           BodyTemplateScript="WebGridCompositeRowNumberEditCellTemplate"
                            Editable="false">
                     </IgbColumn>
                 </IgbColumnLayout>
@@ -129,7 +131,8 @@
                            RowStart="1"
                            ColStart="1"
                            Header="商品コード"
-                           Editable="true">
+                           BodyTemplateScript="WebGridCompositeItemCodeEditCellTemplate"
+                           Editable="false">
                     </IgbColumn>
                     <IgbColumn RowStart="1"
                            ColStart="2"
@@ -145,7 +148,8 @@
                            ColStart="1"
                            ColEnd="3"
                            Header="商品名"
-                           Editable="true">
+                           BodyTemplateScript="WebGridCompositeItemNameEditCellTemplate"
+                           Editable="false">
                     </IgbColumn>
 
 
@@ -154,6 +158,7 @@
                            RowStart="1"
                            ColStart="3"
                            Header="数量"
+                           BodyTemplateScript="WebGridCompositeQuantityEditCellTemplate"
                            Editable="true">
                     </IgbColumn>
 
@@ -162,6 +167,7 @@
                            RowStart="2"
                            ColStart="3"
                            Header="単価"
+                           BodyTemplateScript="WebGridCompositeUnitPriceEditCellTemplate"
                            Editable="true">
                     </IgbColumn>
 
@@ -202,9 +208,9 @@
                            ColStart="2"
                            Header="カスタム列2">
                         <BodyTemplate>
-                            <input style="width:100px"> - <input style="width:20px">
+                            <input style="width:100px" class="form-control"> - <input style="width:20px" class="form-control">
                             <br>
-                            <input type="checkbox"> チェックボックス
+                            <input type="checkbox" class="form-check"> チェックボックス
                         </BodyTemplate>
                     </IgbColumn>
                 </IgbColumnLayout>
