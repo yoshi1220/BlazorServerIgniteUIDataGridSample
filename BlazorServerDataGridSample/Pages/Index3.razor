@@ -112,7 +112,7 @@
                            Header="伝票番号">
 
                         <BodyTemplate>
-                            <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.SlipNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
+                            <input type="number" class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.SlipNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
                         </BodyTemplate>
 
                     </IgbColumn>
@@ -123,7 +123,7 @@
                            ColStart="2"
                            Header="行番号">
                         <BodyTemplate>
-                            <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.RowNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
+                            <input type="number" class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.RowNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
                         </BodyTemplate>
                     </IgbColumn>
                 </IgbColumnLayout>
@@ -135,7 +135,7 @@
                            ColStart="1"
                            Header="商品コード">
                         <BodyTemplate>
-                            <input type="text" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemCode = args.Value?.ToString()!))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
+                            <input type="text" class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemCode = args.Value?.ToString()!))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
                         </BodyTemplate>
                     </IgbColumn>
                     <IgbColumn RowStart="1"
@@ -153,7 +153,7 @@
                            ColEnd="3"
                            Header="商品名">
                         <BodyTemplate>
-                            <input type="text" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemName = args.Value?.ToString()!))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
+                            <input type="text" class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemName = args.Value?.ToString()!))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
                         </BodyTemplate>
                     </IgbColumn>
 
@@ -165,7 +165,7 @@
                            Header="数量"
                            Width="100px">
                         <BodyTemplate>
-                            <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.Quantity = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
+                            <input type="number" class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.Quantity = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
                         </BodyTemplate>
                     </IgbColumn>
 
@@ -175,7 +175,7 @@
                            ColStart="3"
                            Header="単価">
                         <BodyTemplate>
-                            <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.UnitPrice = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
+                            <input type="number" class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.UnitPrice = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
                         </BodyTemplate>
                     </IgbColumn>
 
@@ -185,6 +185,9 @@
                            ColStart="4"
                            Header="金額"
                            Width="100px">
+                        <BodyTemplate>
+                            <input type="number" class="form-control igx-grid__td--number" value="@context.Cell.Value" disabled style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
+                        </BodyTemplate>
                     </IgbColumn>
 
                     <IgbColumn Field="SalesTax"
@@ -193,6 +196,9 @@
                            ColStart="4"
                            Header="消費税"
                            Width="100px">
+                        <BodyTemplate>
+                            <input type="number" class="form-control igx-grid__td igx-grid__td--fw igx-grid__td--number" value="@context.Cell.Value" disabled style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
+                        </BodyTemplate>
                     </IgbColumn>
                 </IgbColumnLayout>
 
@@ -416,57 +422,59 @@
 
     private async Task OnCellEditExit(IgbGridEditDoneEventArgs args)
     {
-        try
-        {
-            errorMessage = "";
 
-            //対象のセルを特定
-            var columnIndex = args.Detail.CellID.ColumnID;
-            var rowIndex = args.Detail.CellID.RowIndex;
+        //OnCellInputに処理を移行
+        //try
+        //{
+        //    errorMessage = "";
 
-            //変更された値を取得する
-            var parent = (IgbGridEditDoneEventArgsDetail)args.Detail.CellID.Parent;
-            var newValue = parent.NewValue;
+        //    //対象のセルを特定
+        //    var columnIndex = args.Detail.CellID.ColumnID;
+        //    var rowIndex = args.Detail.CellID.RowIndex;
 
-            //編集内容をViewModelに反映する
-            var updateData = _salesDetails[rowIndex];
+        //    //変更された値を取得する
+        //    var parent = (IgbGridEditDoneEventArgsDetail)args.Detail.CellID.Parent;
+        //    var newValue = parent.NewValue;
 
-            if (columnIndex == 4) //商品コード
-            {
-                updateData.ItemCode = newValue.ToString()!;
-            }
+        //    //編集内容をViewModelに反映する
+        //    var updateData = _salesDetails[rowIndex];
 
-            if (columnIndex == 6) //商品名
-            {
-                updateData.ItemName = newValue.ToString()!;
-            }
+        //    if (columnIndex == 4) //商品コード
+        //    {
+        //        updateData.ItemCode = newValue.ToString()!;
+        //    }
+
+        //    if (columnIndex == 6) //商品名
+        //    {
+        //        updateData.ItemName = newValue.ToString()!;
+        //    }
 
 
-            if (columnIndex == 7) //数量
-            {
-                updateData.Quantity = decimal.Parse(newValue.ToString()!);
-                updateData.Amount = Math.Ceiling(updateData.Quantity * updateData.UnitPrice);
-                updateData.SalesTax = Math.Ceiling(updateData.Amount * 0.1M);
-            }
+        //    if (columnIndex == 7) //数量
+        //    {
+        //        updateData.Quantity = decimal.Parse(newValue.ToString()!);
+        //        updateData.Amount = Math.Ceiling(updateData.Quantity * updateData.UnitPrice);
+        //        updateData.SalesTax = Math.Ceiling(updateData.Amount * 0.1M);
+        //    }
 
-            if (columnIndex == 8) //単価
-            {
-                updateData.UnitPrice = decimal.Parse(newValue.ToString()!);
-                updateData.Amount = Math.Ceiling(updateData.Quantity * updateData.UnitPrice);
-                updateData.SalesTax = Math.Ceiling(updateData.Amount * 0.1M);
-            }
+        //    if (columnIndex == 8) //単価
+        //    {
+        //        updateData.UnitPrice = decimal.Parse(newValue.ToString()!);
+        //        updateData.Amount = Math.Ceiling(updateData.Quantity * updateData.UnitPrice);
+        //        updateData.SalesTax = Math.Ceiling(updateData.Amount * 0.1M);
+        //    }
 
-            //変更内容を反映
-            _grid!.NotifyUpdateItem(_salesDetails, rowIndex, updateData);
+        //    //変更内容を反映
+        //    _grid!.NotifyUpdateItem(_salesDetails, rowIndex, updateData);
 
-            this.StateHasChanged();
+        //    this.StateHasChanged();
 
-        }
-        catch (Exception ex)
-        {
-            //検証のため、処理全体でエラー検知中
-            errorMessage = ex.ToString();
-        }
+        //}
+        //catch (Exception ex)
+        //{
+        //    //検証のため、処理全体でエラー検知中
+        //    errorMessage = ex.ToString();
+        //}
 
         await Task.CompletedTask;
     }
