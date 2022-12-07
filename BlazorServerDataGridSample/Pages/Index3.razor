@@ -197,7 +197,7 @@
                            Header="消費税"
                            Width="100px">
                         <BodyTemplate>
-                            <input type="number" class="form-control igx-grid__td igx-grid__td--fw igx-grid__td--number" value="@context.Cell.Value" disabled style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
+                            <input type="number" class="form-control" value="@context.Cell.Value" disabled style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
                         </BodyTemplate>
                     </IgbColumn>
                 </IgbColumnLayout>
@@ -307,6 +307,9 @@
     //グリッドのViewModel
     private List<SalesDetailViewModel> _salesDetails = new();
 
+    //登録済みのデータが削除されたときにIdをひかえておく
+    private HashSet<int> _removedIdList = new();
+
     //新規データ追加
     private void AddNewDataButtonClick()
     {
@@ -332,7 +335,7 @@
 
         try
         {
-            await SalesDetailService.UpdateAllAsync(_salesDetails);
+            await SalesDetailService.UpdateAllAsync(_salesDetails, _removedIdList);
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -370,6 +373,9 @@
 
         if (rowIndex == -1) return;
         var removeData = _salesDetails[rowIndex];
+
+        //削除されたIdを控えておく
+        _removedIdList.Add(removeData.Id);
 
         _salesDetails.Remove(removeData);
         grid.NotifyRemoveItem(_salesDetails, rowIndex, removeData);

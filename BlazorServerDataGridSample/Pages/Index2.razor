@@ -294,6 +294,9 @@
     //グリッドのViewModel
     private List<SalesDetailViewModel> _salesDetails = new();
 
+     //登録済みのデータが削除されたときにIdをひかえておく
+    private HashSet<int> _removedIdList = new();
+
     //新規データ追加
     private void AddNewDataButtonClick()
     {
@@ -319,7 +322,7 @@
 
         try
         {
-            await SalesDetailService.UpdateAllAsync(_salesDetails);
+            await SalesDetailService.UpdateAllAsync(_salesDetails, _removedIdList);
         }
         catch (DbUpdateConcurrencyException ex)
         {
@@ -357,6 +360,9 @@
 
         if (rowIndex == -1) return;
         var removeData = _salesDetails[rowIndex];
+
+        //削除されたIdを控えておく
+        _removedIdList.Add(removeData.Id);
 
         _salesDetails.Remove(removeData);
         grid.NotifyRemoveItem(_salesDetails, rowIndex, removeData);
