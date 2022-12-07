@@ -28,6 +28,10 @@ public class SalesDetail
 
     public decimal SalesTax { get; set; }
 
+    public string CustomerInfo1 { get; set; } = "";
+
+    public string CustomerInfo2 { get; set; } = "";
+
     [Timestamp]
     public byte[]? TimeStamp { get; set; }
 }

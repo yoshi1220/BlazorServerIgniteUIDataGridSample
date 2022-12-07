@@ -35,6 +35,12 @@ public class SalesDetailViewModel
     [Display(Name = "消費税")]
     public decimal SalesTax { get; set; }
 
+    [Display(Name = "得意先情報1")]
+    public string CustomerInfo1 { get; set; } = "";
+
+    [Display(Name = "得意先情報2")]
+    public string CustomerInfo2 { get; set; } = "";
+
     public static ValidationResult? SalesDetailCheck(SalesDetailViewModel model, ValidationContext context)
     {
         if (model == null)
