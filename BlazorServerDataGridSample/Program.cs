@@ -8,7 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options =>
+    {
+        // IgbGrid で BodyTemplate を使用する場合に、Blazor Server の SignalR 通信サイズが
+        // 既定の上限値を超える場合があるので、通信サイズ上限を緩和
+        options.MaximumReceiveMessageSize = 102400000;
+    });
 
 //DB関連
 builder.Services.AddDbContextFactory<SampleDbContext>(options =>
