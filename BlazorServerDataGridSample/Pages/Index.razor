@@ -110,6 +110,11 @@
                            ColStart="1"
                            Header="伝票番号"
                            Editable="false">
+
+                        <BodyTemplate>
+                            <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.SlipNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
+                        </BodyTemplate>
+
                     </IgbColumn>
                     <IgbColumn Field="RowNumber"
                            Width="100px"
@@ -356,6 +361,15 @@
         grid.NotifyRemoveItem(_salesDetails, rowIndex, removeData);
     }
 
+    private void OnCellInput(IgbCellTemplateContext context, Action<SalesDetailViewModel> setter)
+    {
+        var rowIndex = context.Cell.Id.RowIndex;
+
+        if (rowIndex == -1) return;
+        var targetRow = _salesDetails[rowIndex];
+
+        setter(targetRow);
+    }
 
     //以下、GridのCellイベント
     private async Task OnValidationStatusChange(IgbGridValidationStatusEventArgs args)
