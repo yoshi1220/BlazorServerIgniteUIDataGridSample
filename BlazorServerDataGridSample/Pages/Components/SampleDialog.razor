@@ -87,7 +87,7 @@
         var grid = context.Parent as IgbGrid;
         if (grid == null) return;
 
-        var RowIndex = context.Cell.Id.RowIndex;
+        RowIndex = context.Cell.Id.RowIndex;
         if (RowIndex == -1) return;
 
         //検索元の行の商品を表示する

@@ -1,4 +1,5 @@
-﻿@page "/index3"
+﻿@page "/"
+@page "/index3"
 
 @inject ISalesDetailService SalesDetailService;
 @inject IIgniteUIBlazor IgniteUIBlazor
@@ -92,7 +93,7 @@
             <br>
 
             <IgbGrid Data="_salesDetails"
-                 Height="600px"
+                 Height="500px"
                  AutoGenerate="false"
                  ValidationStatusChange="OnValidationStatusChange"
                  CellEdit="OnCellEdit"
@@ -108,8 +109,7 @@
                            RowStart="1"
                            RowEnd="2"
                            ColStart="1"
-                           Header="伝票番号"
-                           Editable="false">
+                           Header="伝票番号">
 
                         <BodyTemplate>
                             <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.SlipNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
@@ -121,25 +121,21 @@
                            RowStart="1"
                            RowEnd="2"
                            ColStart="2"
-                           Header="行番号"
-                           Editable="false">
+                           Header="行番号">
                         <BodyTemplate>
                             <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.RowNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
                         </BodyTemplate>
                     </IgbColumn>
                 </IgbColumnLayout>
 
-                <IgbColumnLayout Header="Detail"
-                             Pinned="true">
-
+                <IgbColumnLayout Header="Detail" Pinned="true">
 
                     <IgbColumn Field="ItemCode"
                            RowStart="1"
                            ColStart="1"
-                           Header="商品コード"
-                           Editable="true">
+                           Header="商品コード">
                         <BodyTemplate>
-                            <input type="text" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemCode = args.Value?.ToString()))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
+                            <input type="text" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemCode = args.Value?.ToString()!))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
                         </BodyTemplate>
                     </IgbColumn>
                     <IgbColumn RowStart="1"
@@ -155,10 +151,9 @@
                            RowEnd="2"
                            ColStart="1"
                            ColEnd="3"
-                           Header="商品名"
-                           Editable="true">
+                           Header="商品名">
                         <BodyTemplate>
-                            <input type="text" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemName = args.Value?.ToString()))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
+                            <input type="text" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.ItemName = args.Value?.ToString()!))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
                         </BodyTemplate>
                     </IgbColumn>
 
@@ -168,7 +163,7 @@
                            RowStart="1"
                            ColStart="3"
                            Header="数量"
-                           Editable="true">
+                           Width="100px">
                         <BodyTemplate>
                             <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.Quantity = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
                         </BodyTemplate>
@@ -178,8 +173,7 @@
                            DataType="GridColumnDataType.Number"
                            RowStart="2"
                            ColStart="3"
-                           Header="単価"
-                           Editable="true">
+                           Header="単価">
                         <BodyTemplate>
                             <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.UnitPrice = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0; text-align: right;" />
                         </BodyTemplate>
@@ -190,7 +184,7 @@
                            RowStart="1"
                            ColStart="4"
                            Header="金額"
-                           Editable="false">
+                           Width="100px">
                     </IgbColumn>
 
                     <IgbColumn Field="SalesTax"
@@ -198,18 +192,32 @@
                            RowStart="2"
                            ColStart="4"
                            Header="消費税"
-                           Editable="false">
+                           Width="100px">
                     </IgbColumn>
                 </IgbColumnLayout>
 
                 <IgbColumnLayout Header="CustomTemplate" Pinned="true">
 
-                    <IgbColumn RowStart="1"
+                    <IgbColumn Field="CustomerInfo"
+                           RowStart="1"
                            ColStart="1"
                            Header="得意先情報">
                         <BodyTemplate>
-                            <input class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.CustomerInfo1 = args.Value?.ToString()))">
-                            <input class="form-control" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.CustomerInfo2= args.Value?.ToString()))">
+                            <input class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[0]" @oninput="(args => OnCellInput(context, row => row.CustomerInfo1 = args.Value?.ToString()!))">
+                            <input class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[1]" @oninput="(args => OnCellInput(context, row => row.CustomerInfo2= args.Value?.ToString()!))">
+                        </BodyTemplate>
+                    </IgbColumn>
+
+                    <IgbColumn Field="ConstructionNumber"
+                           RowStart="1"
+                           ColStart="2"
+                           Header="工事番号">
+                        <BodyTemplate>
+                            <div class="d-flex">
+                                <input style="width:130px" class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[0]" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber1 = args.Value?.ToString()!))">
+                                &ensp; - &ensp;
+                                <input style="width:40px" class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[1]" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber2 = args.Value?.ToString()!))">
+                            </div>
                         </BodyTemplate>
                     </IgbColumn>
                 </IgbColumnLayout>
@@ -272,7 +280,7 @@
     //グリッド
     private IgbGrid? _grid;
 
-    //新規データ登録用
+    //新規データ登録用の初期値
     private readonly SalesDetailViewModel newSalesDetail = new SalesDetailViewModel
         {
             RowNumber = 1,
@@ -364,11 +372,27 @@
     private void OnCellInput(IgbCellTemplateContext context, Action<SalesDetailViewModel> setter)
     {
         var rowIndex = context.Cell.Id.RowIndex;
+        var columnIndex = context.Cell.Id.ColumnID;
 
         if (rowIndex == -1) return;
+        if (columnIndex == -1) return;
+
         var targetRow = _salesDetails[rowIndex];
 
         setter(targetRow);
+
+        //金額、消費税の計算
+        if (columnIndex == 7 || columnIndex == 8) //数量 or 単価
+        {
+
+            targetRow.Amount = Math.Ceiling(targetRow.Quantity * targetRow.UnitPrice);
+            targetRow.SalesTax = Math.Ceiling(targetRow.Amount * 0.1M);
+        }
+
+        //変更内容を反映
+        _grid!.NotifyUpdateItem(_salesDetails, rowIndex, targetRow);
+
+        this.StateHasChanged();
     }
 
     //以下、GridのCellイベント

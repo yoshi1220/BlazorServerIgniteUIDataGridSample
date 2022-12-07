@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/index1"
 
 @inject ISalesDetailService SalesDetailService;
 @inject IIgniteUIBlazor IgniteUIBlazor
@@ -364,11 +364,31 @@
     private void OnCellInput(IgbCellTemplateContext context, Action<SalesDetailViewModel> setter)
     {
         var rowIndex = context.Cell.Id.RowIndex;
+        var columnIndex = context.Cell.Id.ColumnID;
 
         if (rowIndex == -1) return;
+        if (columnIndex == -1) return;
+
         var targetRow = _salesDetails[rowIndex];
+    
+
+        if (columnIndex == 7) //数量
+        {
+       
+            targetRow.Amount = Math.Ceiling(targetRow.Quantity * targetRow.UnitPrice);
+            targetRow.SalesTax = Math.Ceiling(targetRow.Amount * 0.1M);
+        }
+
+        if (columnIndex == 8) //単価
+        {
+       
+            targetRow.Amount = Math.Ceiling(targetRow.Quantity * targetRow.UnitPrice);
+            targetRow.SalesTax = Math.Ceiling(targetRow.Amount * 0.1M);
+        }
 
         setter(targetRow);
+
+        this.StateHasChanged();
     }
 
     //以下、GridのCellイベント

@@ -35,11 +35,36 @@ public class SalesDetailViewModel
     [Display(Name = "消費税")]
     public decimal SalesTax { get; set; }
 
+
+    private string _customerInfo = "";
+    [Display(Name = "得意先情報")]
+    public string CustomerInfo
+    {
+        get { return CustomerInfo1 + "," + CustomerInfo2; }
+        set { _customerInfo = value; }
+    }
+
     [Display(Name = "得意先情報1")]
     public string CustomerInfo1 { get; set; } = "";
 
     [Display(Name = "得意先情報2")]
     public string CustomerInfo2 { get; set; } = "";
+
+
+    private string _constructionNumber = "";
+    [Display(Name = "工事番号")]
+    public string ConstructionNumber
+    {
+        get { return ConstructionNumber1 + "," + ConstructionNumber2; }
+        set { _constructionNumber = value; }
+    }
+
+    [Display(Name = "工事番号1")]
+    public string ConstructionNumber1 { get; set; } = "";
+
+    [Display(Name = "工事番号2")]
+    public string ConstructionNumber2 { get; set; } = "";
+
 
     public static ValidationResult? SalesDetailCheck(SalesDetailViewModel model, ValidationContext context)
     {

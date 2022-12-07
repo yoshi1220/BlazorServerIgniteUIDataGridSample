@@ -32,6 +32,10 @@ public class SalesDetail
 
     public string CustomerInfo2 { get; set; } = "";
 
+    public string ConstructionNumber1 { get; set; } = "";
+
+    public string ConstructionNumber2 { get; set; } = "";
+
     [Timestamp]
     public byte[]? TimeStamp { get; set; }
 }
