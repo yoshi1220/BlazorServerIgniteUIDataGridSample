@@ -209,8 +209,8 @@
                            ColStart="1"
                            Header="得意先情報">
                         <BodyTemplate>
-                            <input class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[0]" @oninput="(args => OnCellInput(context, row => row.CustomerInfo1 = args.Value?.ToString()!))">
-                            <input class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[1]" @oninput="(args => OnCellInput(context, row => row.CustomerInfo2= args.Value?.ToString()!))">
+                            <input class="form-control" value="@GetFieldValue(context, row => row.CustomerInfo1)" @oninput="(args => OnCellInput(context, row => row.CustomerInfo1 = args.Value?.ToString()!))">
+                            <input class="form-control" value="@GetFieldValue(context, row => row.CustomerInfo2)" @oninput="(args => OnCellInput(context, row => row.CustomerInfo2= args.Value?.ToString()!))">
                         </BodyTemplate>
                     </IgbColumn>
 
@@ -379,6 +379,15 @@
 
         _salesDetails.Remove(removeData);
         grid.NotifyRemoveItem(_salesDetails, rowIndex, removeData);
+    }
+
+    private string GetFieldValue(IgbCellTemplateContext context, Func<SalesDetailViewModel, string?> selector, string defaultValue = "")
+    {
+        var rowIndex = context.Cell.Id.RowIndex;
+        if (rowIndex == -1) return defaultValue;
+        var targetRow = _salesDetails[rowIndex];
+
+        return selector(targetRow) ?? defaultValue;
     }
 
     private void OnCellInput(IgbCellTemplateContext context, Action<SalesDetailViewModel> setter)
