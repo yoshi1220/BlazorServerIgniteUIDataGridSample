@@ -210,7 +210,7 @@
                            Header="得意先情報">
                         <BodyTemplate>
                             <input class="form-control" value="@GetFieldValue(context, row => row.CustomerInfo1)" @oninput="(args => OnCellInput(context, row => row.CustomerInfo1 = args.Value?.ToString()!))">
-                            <input class="form-control" value="@GetFieldValue(context, row => row.CustomerInfo2)" @oninput="(args => OnCellInput(context, row => row.CustomerInfo2= args.Value?.ToString()!))">
+                            <input class="form-control" value="@GetFieldValue(context, row => row.CustomerInfo2)" @oninput="(args => OnCellInput(context, row => row.CustomerInfo2 = args.Value?.ToString()!))">
                         </BodyTemplate>
                     </IgbColumn>
 
@@ -220,9 +220,9 @@
                            Header="工事番号">
                         <BodyTemplate>
                             <div class="d-flex">
-                                <input style="width:130px" class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[0]" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber1 = args.Value?.ToString()!))">
+                                <input style="width:130px" class="form-control" value="@GetFieldValue(context, row => row.ConstructionNumber1)" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber1 = args.Value?.ToString()!))">
                                 &ensp; - &ensp;
-                                <input style="width:40px" class="form-control" value="@context.Cell.Value?.ToString()?.Split(',')[1]" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber2 = args.Value?.ToString()!))">
+                                <input style="width:40px" class="form-control" value="@GetFieldValue(context, row => row.ConstructionNumber2)" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber2 = args.Value?.ToString()!))">
                             </div>
                         </BodyTemplate>
                     </IgbColumn>

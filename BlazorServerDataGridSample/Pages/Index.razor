@@ -110,11 +110,6 @@
                            ColStart="1"
                            Header="伝票番号"
                            Editable="false">
-
-                        <BodyTemplate>
-                            <input type="number" value="@context.Cell.Value" @oninput="(args => OnCellInput(context, row => row.SlipNumber = int.TryParse(args.Value?.ToString(), out var n) ? n: 0))" style="position:absolute; top:0; left:0; bottom:0; right:0;" />
-                        </BodyTemplate>
-
                     </IgbColumn>
                     <IgbColumn Field="RowNumber"
                            Width="100px"
