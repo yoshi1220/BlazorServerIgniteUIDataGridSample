@@ -219,10 +219,22 @@
                            ColStart="2"
                            Header="工事番号">
                         <BodyTemplate>
-                            <div class="d-flex">
-                                <input style="width:130px" class="form-control" value="@GetFieldValue(context, row => row.ConstructionNumber1)" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber1 = args.Value?.ToString()!))">
-                                &ensp; - &ensp;
-                                <input style="width:40px" class="form-control" value="@GetFieldValue(context, row => row.ConstructionNumber2)" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber2 = args.Value?.ToString()!))">
+                            <div class="mimic-inlineditor-container">
+
+                                <div class="mimic-inlineditor-cover">
+                                    <div>
+                                        @GetFieldValue(context, row => row.ConstructionNumber1)
+                                        -
+                                        @GetFieldValue(context, row => row.ConstructionNumber2)
+                                    </div>
+                                </div>
+
+                                <div class="d-flex">
+                                    <input style="width:130px" class="form-control" value="@GetFieldValue(context, row => row.ConstructionNumber1)" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber1 = args.Value?.ToString()!))">
+                                    &ensp; - &ensp;
+                                    <input style="width:40px" class="form-control" value="@GetFieldValue(context, row => row.ConstructionNumber2)" @oninput="(args => OnCellInput(context, row => row.ConstructionNumber2 = args.Value?.ToString()!))">
+                                </div>
+
                             </div>
                         </BodyTemplate>
                     </IgbColumn>
