@@ -2,3 +2,29 @@
     font-size: 80%;
     margin-top: 4px;
 }
+
+::deep .mimic-inlineditor-container:has(:focus) .mimic-inlineditor-cover {
+    visibility: hidden;
+}
+
+::deep .mimic-inlineditor-cover {
+    background-color: #f9fafa;
+    box-sizing: border-box;
+    position: absolute;
+    padding: 10px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    pointer-events: none;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+::deep .igx-grid__tr:hover .mimic-inlineditor-cover {
+    background-color: #e9ecef;
+}
