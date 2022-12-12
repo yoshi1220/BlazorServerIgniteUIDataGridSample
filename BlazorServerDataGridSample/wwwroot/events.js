@@ -166,3 +166,27 @@ igRegisterScript("WebGridCompositeUnitPriceEditCellTemplate", (ctx) => {
 }, false);
 
 
+
+igRegisterScript("WebGridCompositeConstructionCellTemplate", (ctx) => {
+    var html = window.igTemplating.html;
+    return html` <div class="construction-container">
+    <span><strong>Sample Name:</strong>Sample Construction</span>
+    <br />
+</div>`;
+}, false);
+
+
+igRegisterScript("WebGridCompositeConstructionEditCellTemplate", (ctx) => {
+    var html = window.igTemplating.html;
+    window.keyUpHandler = function () {
+        ctx.cell.row.data[window.event.target.id] = window.event.target.value;
+    }
+    return html`<div class="contruction-container--edit">
+    <div class="d-flex">
+        <input style="width:130px" class="form-control" id='ContactName' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.ConstructionNumber1}">
+        &ensp; - &ensp;
+        <input style="width:40px" class="form-control" id='ContactName' onkeyup='keyUpHandler()' value="${ctx.cell.row.data.ConstructionNumber2}">
+    </div>
+    <br>
+</div>`;
+}, false);
