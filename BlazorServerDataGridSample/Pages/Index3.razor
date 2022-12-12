@@ -223,9 +223,10 @@
 
                                 <div class="mimic-inlineditor-cover">
                                     <div>
-                                        @GetFieldValue(context, row => row.ConstructionNumber1)
-                                        -
-                                        @GetFieldValue(context, row => row.ConstructionNumber2)
+                                        @if(@GetFieldValue(context, row => row.ConstructionNumber1) != "")
+                                        {
+                                            @GetFieldValue(context, row => row.ConstructionName)
+                                        }
                                     </div>
                                 </div>
 

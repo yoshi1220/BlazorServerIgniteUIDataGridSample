@@ -65,6 +65,10 @@ public class SalesDetailViewModel
     [Display(Name = "工事番号2")]
     public string ConstructionNumber2 { get; set; } = "";
 
+    [Display(Name = "工事名称")]
+    public string ConstructionName { get; set; } = "サンプル工事名称";
+
+
 
     public static ValidationResult? SalesDetailCheck(SalesDetailViewModel model, ValidationContext context)
     {
